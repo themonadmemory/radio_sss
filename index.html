@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RADIO SSS</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000;
+            text-align: center;
+            margin: 0;
+            overflow: hidden;
+            color: #fff;
+        }
+
+        #header {
+            background-color: #333;
+            padding: 20px;
+            display: none;
+        }
+
+        h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        #playlist {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            display: none;
+        }
+
+        .song {
+            margin: 10px;
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+        }
+
+        #player {
+            margin-top: 20px;
+            display: none;
+        }
+
+        #gif-section {
+            position: relative;
+            overflow: hidden;
+            height: 70vh;
+        }
+
+        #gif {
+            width: auto;
+            height: 100%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .button-container {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 70%;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .button-container button {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            padding: 15px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        #song-name {
+            position: absolute;
+            bottom: 5%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.5em;
+            color: pink;
+            opacity: 0;
+            transition: opacity 1s ease-in-out, color 0.5s ease-in-out;
+        }
+
+        #audio-player {
+            display: none;
+            width: 100%;
+            margin-top: 10px;
+            background-color: #333;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Page d'introduction -->
+    <div id="intro">
+        <h1>RADIO SSS</h1>
+    </div>
+
+    <script>
+        // Affichage progressif du contenu
+        setTimeout(function() {
+            document.getElementById('header').style.display = 'block';
+            document.getElementById('intro').style.display = 'none';
+
+            // Ici, vous pouvez également ajouter le chargement asynchrone des ressources si nécessaire
+
+            // Mettez en évidence le contenu progressivement
+            setTimeout(function() {
+                document.getElementById('playlist').style.display = 'flex';
+            }, 500);
+
+            setTimeout(function() {
+                document.getElementById('player').style.display = 'block';
+            }, 1000);
+        }, 2000); // Temps de délai d'introduction
+    </script>
+
+    <div id="gif-section">
+        <img id="gif" src="https://media.giphy.com/media/8FC9K4TkQa4SWJ9w66/giphy.gif?cid=ecf05e47pclsrjnb0gn94cv46x6fmkzpq29n0rlwz5bpoxsq&ep=v1_gifs_search&rid=giphy.gif&ct=g" alt="GIF">
+        <div class="button-container">
+            <button id="prev-btn" onclick="playPrev()">Prev</button>
+            <button id="play-btn" onclick="togglePlayPause()">Play</button>
+            <button id="next-btn" onclick="playNext()">Next</button>
+            <div id="song-name">Song Name</div>
+        </div>
+    </div>
+
+    <ul id="playlist">
+        <!-- Ajoutez ici les morceaux avec la classe "song" -->
+        <li class="song" data-src="08 - Cafo.mp3">ANIMAL AS LEADERS - CAFO</li>
+        <li class="song" data-src="01. Chokehold.mp3">SLEEPTOKEN - CHOKEHOLD</li>
+        <li class="song" data-src="ALEX TERRIBLE - DOOM SLAYER.mp3">ALEX TERRIBLE - DOOM SLAYER</li>
+        <li class="song" data-src="01 - Kirisute Gomen.mp3">TRIVIUM - KIRISUTE GOMEN</li>
+        <li class="song" data-src="05 - Aftermath.mp3">STRAPPING YOUNG LAD - AFTERMATH</li>
+        <li class="song" data-src="03 - Fantazia A Rhapsody In Blue Themaira.mp3">SKORPIO - FANTAZIA A RHAPSODY IN BLUE THEMAIRA</li>
+        <li class="song" data-src="02 - Midnight Nation.mp3">BOBAFLEX - MIDNIGHT NATION</li>
+        <li class="song" data-src="01 - Initiation.mp3">BLEEDSEASON - INITIATION</li>
+        <li class="song" data-src="04 - Judge.mp3">BLEEDSEASON - JUDGE</li>
+        <li class="song" data-src="07 - F.E.A.R. Transmission 2 Trust.mp3">BLACK VEIL BRIDES - F.E.A.R. TRANSMISSION 2 TRUST</li>
+        <li class="song" data-src="13 - The Crusade.mp3">TRIVIUM - THE CRUSADE</li>
+        <li class="song" data-src="10. The Club (Provocation Mix).mp3">DAVANTAGE - THE CLUB (PROVOCATION MIX)</li>
+        <li class="song" data-src="01 - Fightman.mp3">CASIOPEA - FIGHTMAN</li>
+    
+        <!-- Ajoutez d'autres morceaux ici -->
+    </ul>
+
+    <div id="player">
+        <audio controls id="audio-player" onended="playNext()">
+            <!-- Le lecteur sera configuré ici -->
+        </audio>
+    </div>
+
+    <script>
+        var player = document.getElementById('audio-player');
+        var playlist = document.getElementById('playlist');
+        var currentIndex = 0;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Ajoutez vos morceaux à la playlist
+            // Exemple : playlist.innerHTML += '<li class="song" data-src="lien_vers_votre_morceau.mp3">Nom du morceau</li>';
+            updatePlayer();
+
+            // Configurez le lecteur audio avec le premier morceau
+            // Exemple : player.src = defaultTrack.dataset.src;
+        });
+
+        function updatePlayer() {
+            var tracks = playlist.children;
+            player.src = tracks[currentIndex].dataset.src;
+            updateSongName(tracks[currentIndex].innerText);
+        }
+
+        function updateSongName(name) {
+            var songNameElement = document.getElementById('song-name');
+            songNameElement.innerText = name;
+
+            // Effet visuel
+            songNameElement.style.color = getRandomColor();
+            songNameElement.style.opacity = 1;
+
+            // Déclencher la disparition progressive
+            setTimeout(function() {
+                fadeOut(songNameElement);
+            }, 2000); // Temps d'affichage du nom du morceau
+        }
+
+        function fadeOut(element) {
+            var opacity = 1;
+            var interval = setInterval(function() {
+                if (opacity <= 0.1) {
+                    clearInterval(interval);
+                    element.style.opacity = 0;
+                } else {
+                    element.style.opacity = opacity;
+                    opacity -= 0.1;
+                }
+            }, 100);
+        }
+
+        function getRandomColor() {
+            var letters = '0123456789ABCDEF';
+            var color = '#';
+            for (var i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+
+        function togglePlayPause() {
+            if (player.paused) {
+                player.play();
+                document.getElementById('play-btn').innerText = 'Pause';
+            } else {
+                player.pause();
+                document.getElementById('play-btn').innerText = 'Play';
+            }
+        }
+
+        function playNext() {
+            currentIndex = (currentIndex + 1) % playlist.children.length;
+            updatePlayer();
+            player.play();
+            document.getElementById('play-btn').innerText = 'Pause';
+        }
+
+        function playPrev() {
+            currentIndex = (currentIndex - 1 + playlist.children.length) % playlist.children.length;
+            updatePlayer();
+            player.play();
+            document.getElementById('play-btn').innerText = 'Pause';
+        }
+    </script>
+
+</body>
+</html>
